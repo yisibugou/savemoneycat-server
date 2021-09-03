@@ -15,4 +15,11 @@ public class TestController {
         res.put("goodsSign", PddUtil.getGoodsSign(params.getString("goodsId")));
         return res;
     }
+
+    @RequestMapping("/getPromotion")
+    public JSONObject getPromotion(@RequestBody JSONObject params) {
+        JSONObject res = new JSONObject();
+        res = JSONObject.parseObject(PddUtil.getPromotion(params));
+        return res;
+    }
 }

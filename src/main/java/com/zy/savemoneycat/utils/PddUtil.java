@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,12 +19,16 @@ import java.util.TreeMap;
 public class PddUtil {
     private static final String CLIENT_ID = "5f4a9e7408904a4cad0deb562abe2119";
     private static final String CLIENT_SECRET = "f7565af500801223deb999a90a6765233ff4002d";
-
+    private static final String URL = "https://gw-api.pinduoduo.com/api/router";
+    /**
+     * 拼多多搜索商品
+     * @param params
+     * @return
+     */
     public static String searchGoods(JSONObject params) {
         String result = "";
-        String url = "https://gw-api.pinduoduo.com/api/router";
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(url);
+        HttpPost post = new HttpPost(URL);
         try {
             params.put("type", "pdd.ddk.goods.search");
             params.put("client_id", CLIENT_ID);
@@ -42,7 +47,11 @@ public class PddUtil {
         }
         return result;
     }
-
+    /**
+     * 拼多多获取goodsSign
+     * @param goodsId
+     * @return
+     */
     public static String getGoodsSign(String goodsId) {
         String goodsSign = "";
         JSONObject params = new JSONObject();
@@ -54,7 +63,11 @@ public class PddUtil {
         goodsSign = goodsList.getJSONObject(0).getString("goods_sign");
         return goodsSign;
     }
-
+    /**
+     * 拼多多请求需要的签名
+     * @param params
+     * @return
+     */
     public static String getSign(JSONObject params) {
         String sign = "";
         try {
@@ -80,5 +93,33 @@ public class PddUtil {
             e.printStackTrace();
         }
         return sign;
+    }
+
+    /**
+     * 拼多多获取推广链接
+     * @param params
+     * @return
+     */
+    public static String getPromotion(JSONObject params) {
+        String result = "";
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost(URL);
+        try {
+            params.put("type", "pdd.ddk.goods.promotion.url.generate");
+            params.put("client_id", CLIENT_ID);
+            params.put("timestamp", System.currentTimeMillis() / 1000);
+            params.put("p_id", "8718647_219283366");
+            params.put("sign", getSign(params));
+            StringEntity s = new StringEntity(params.toJSONString());
+            s.setContentEncoding("utf-8");
+            s.setContentType("application/json");
+            post.setEntity(s);
+            HttpResponse res = httpclient.execute(post);
+            result = EntityUtils.toString(res.getEntity());
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

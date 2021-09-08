@@ -19,6 +19,7 @@ public class TestController {
     @RequestMapping("/getPromotion")
     public JSONObject getPromotion(@RequestBody JSONObject params) {
         JSONObject res = new JSONObject();
+        params.put("goods_sign_list", "[\"" + PddUtil.getGoodsSign(params.getString("goodsId")) + "\"]");
         res = JSONObject.parseObject(PddUtil.getPromotion(params));
         return res;
     }
